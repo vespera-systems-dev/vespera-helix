@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vespera Helix | Bidirectional DNA Transcoder</title>
+    <style>
+        :root {
+            --bg: #030303; /* Deep space black */
+            --dna-green: #00ff88; /* Biotech green */
+            --dna-blue: #00e5ff; /* Cyan accent */
+            --panel: #0a0a0a; /* Subtle dark gray */
+            --text-primary: #f0f0f0;
+            --text-secondary: #888888;
+            --font-main: 'Courier New', monospace; /* Monospace for alignment */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* SVG Helix Icon Rotation Animation */
+        @keyframes rotateHelix {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #1a1a1a;
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .dna-icon {
+            width: 32px;
+            height: 32px;
+            fill: var(--dna-green);
+            animation: rotateHelix 10s linear infinite;
+        }
+
+        h1 {
+            color: var(--dna-green);
+            font-size: 1.4rem;
+            letter-spacing: 5px;
+            font-weight: normal;
+        }
+
+        .container {
+            max-width: 650px;
+            width: 100%;
+            background: var(--panel);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid #1a1a1a;
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.03);
+        }
+
+        .io-section {
+            margin-bottom: 2rem;
+        }
+
+        .label-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .input-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+        }
+
+        .mode-indicator {
+            font-size: 0.7rem;
+            color: var(--dna-blue);
+            background: rgba(0, 229, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        textarea {
+            width: 100%;
+            background: #000;
+            border: 1px solid #222;
+            color: var(--dna-blue);
+            padding: 18px;
+            border-radius: 8px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.5;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--dna-green);
+        }
+
+        textarea::placeholder {
+            color: #333;
+        }
+
+        #output {
+            word-break: break-all;
+            background: #000;
+            padding: 18px;
+            border: 1px solid #222;
+            border-radius: 8px;
+            min-height: 120px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            letter-spacing: 3px; /* Spacing crucial for DNA strings */
+            line-height: 1.6;
+        }
+
+        #output.decoding {
+            color: var(--text-primary);
+            letter-spacing: normal;
+            font-weight: normal;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding-top: 3rem;
+            text-align: center;
+            width: 100%;
+            max-width: 650px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .vespera-sig {
+            color: var(--dna-green);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <!-- Inline SVG DNA Helix Icon -->
+    <svg class="dna-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm-1-13h2v2h-2zm0 4h2v6h-2z"/>
+    </svg>
+    <h1>VESPERA HELIX</h1>
+</div>
+
+<div class="container">
+    
+    <div class="io-section">
+        <div class="label-group">
+            <label class="input-label" for="main-input">System Input</label>
+            <span class="mode-indicator" id="mode-text">AUTO-DETECT</span>
+        </div>
+        <textarea id="main-input" rows="6" placeholder="Paste text or DNA (ACGT) sequence here..." oninput="processInput()"></textarea>
+    </div>
+
+    <div class="io-section" style="margin-bottom: 0;">
+        <div class="label-group">
+            <label class="input-label">Output Result</label>
+        </div>
+        <div id="output">SYSTEM IDLE</div>
+    </div>
+
+</div>
+
+<div class="footer">
+    TRANSCODER v1.0 | ENGINEERED BY <span class="vespera-sig">VESPERA SYSTEMS</span>
+</div>
+
+<script>
+    // Binary Mapping
+    const dnaMap = { '00': 'A', '01': 'C', '10': 'G', '11': 'T' };
+    
+    // Reverse Mapping (A='00', C='01', etc.)
+    const revDnaMap = Object.fromEntries(Object.entries(dnaMap).map(([k, v]) => [v, k]));
+
+    function processInput() {
+        const input = document.getElementById('main-input').value.trim();
+        const output = document.getElementById('output');
+        const modeText = document.getElementById('mode-text');
+
+        // Reset display if input is empty
+        if (!input) {
+            output.textContent = "SYSTEM IDLE";
+            output.classList.remove('decoding');
+            modeText.textContent = "AUTO-DETECT";
+            return;
+        }
+
+        // --- DETECT MODE ---
+        // Check if input consists only of A, C, G, T (ignoring whitespace/newlines)
+        const isDna = /^[ACGT\s\n]+$/i.test(input);
+
+        if (isDna) {
+            // MODE: DECODE (DNA -> Text)
+            modeText.textContent = "DECODING: DNA 🡒 TEXT";
+            output.classList.add('decoding');
+            output.textContent = decodeDnaToText(input.toUpperCase().replace(/[\s\n]/g, ''));
+        } else {
+            // MODE: ENCODE (Text -> DNA)
+            modeText.textContent = "ENCODING: TEXT 🡒 DNA";
+            output.classList.remove('decoding');
+            output.textContent = encodeTextToDna(input);
+        }
+    }
+
+    // Function 1: TEXT -> DNA
+    function encodeTextToDna(text) {
+        let dnaSequence = "";
+        for (let i = 0; i < text.length; i++) {
+            // Char to 8-bit binary
+            let binary = text.charCodeAt(i).toString(2).padStart(8, '0');
+            // Map 2-bit pairs to ACGT
+            for (let j = 0; j < binary.length; j += 2) {
+                let pair = binary.substring(j, j + 2);
+                dnaSequence += dnaMap[pair];
+            }
+        }
+        return dnaSequence;
+    }
+
+    // Function 2: DNA -> TEXT
+    function decodeDnaToText(dna) {
+        // DNA sequences must be multiples of 4 (since 4 bases = 1 byte)
+        if (dna.length % 4 !== 0) {
+            return "ERROR: Invalid DNA sequence length (must be multiple of 4 bases).";
+        }
+
+        let binaryString = "";
+        // Convert ACGT pairs back to 2-bit binary
+        for (let i = 0; i < dna.length; i++) {
+            const base = dna[i];
+            if (revDnaMap[base]) {
+                binaryString += revDnaMap[base];
+            } else {
+                return `ERROR: Invalid base character '${base}' detected.`;
+            }
+        }
+
+        // Convert 8-bit binary chunks back to characters
+        let outputText = "";
+        for (let i = 0; i < binaryString.length; i += 8) {
+            let byte = binaryString.substring(i, i + 8);
+            outputText += String.fromCharCode(parseInt(byte, 2));
+        }
+        return outputText;
+    }
+</script>
+
+</body>
+</html>
