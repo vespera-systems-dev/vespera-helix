@@ -1,277 +1,581 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vespera Helix | Bidirectional DNA Transcoder</title>
-    <style>
-        :root {
-            --bg: #030303; /* Deep space black */
-            --dna-green: #00ff88; /* Biotech green */
-            --dna-blue: #00e5ff; /* Cyan accent */
-            --panel: #0a0a0a; /* Subtle dark gray */
-            --text-primary: #f0f0f0;
-            --text-secondary: #888888;
-            --font-main: 'Courier New', monospace; /* Monospace for alignment */
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vespera Helix v2.2</title>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<style>
+:root{
+--bg:#030303;
+--panel:#0b0b0b;
+--border:#1b1b1b;
+--green:#00ff88;
+--cyan:#00e5ff;
+--text:#f1f1f1;
+--muted:#777;
+font-family:'Courier New',monospace;
+}
 
-        body {
-            background-color: var(--bg);
-            color: var(--text-primary);
-            font-family: var(--font-main);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
 
-        /* SVG Helix Icon Rotation Animation */
-        @keyframes rotateHelix {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+body{
+background:var(--bg);
+color:var(--text);
+padding:40px 20px;
+display:flex;
+justify-content:center;
+font-family:'Courier New',monospace;
+}
 
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #1a1a1a;
-            width: 100%;
-            max-width: 650px;
-        }
+.wrapper{
+width:100%;
+max-width:1100px;
+}
 
-        .dna-icon {
-            width: 32px;
-            height: 32px;
-            fill: var(--dna-green);
-            animation: rotateHelix 10s linear infinite;
-        }
+.header{
+border-bottom:1px solid var(--border);
+padding-bottom:20px;
+margin-bottom:30px;
+}
 
-        h1 {
-            color: var(--dna-green);
-            font-size: 1.4rem;
-            letter-spacing: 5px;
-            font-weight: normal;
-        }
+.title{
+color:var(--green);
+font-size:2rem;
+letter-spacing:5px;
+}
 
-        .container {
-            max-width: 650px;
-            width: 100%;
-            background: var(--panel);
-            padding: 2.5rem;
-            border-radius: 16px;
-            border: 1px solid #1a1a1a;
-            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.03);
-        }
+.subtitle{
+color:var(--muted);
+margin-top:10px;
+}
 
-        .io-section {
-            margin-bottom: 2rem;
-        }
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
 
-        .label-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
+.panel{
+background:var(--panel);
+border:1px solid var(--border);
+border-radius:14px;
+padding:20px;
+}
 
-        .input-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-secondary);
-        }
+.section-title{
+color:var(--cyan);
+margin-bottom:16px;
+letter-spacing:2px;
+font-size:.9rem;
+}
 
-        .mode-indicator {
-            font-size: 0.7rem;
-            color: var(--dna-blue);
-            background: rgba(0, 229, 255, 0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
+textarea{
+width:100%;
+min-height:250px;
+background:#000;
+border:1px solid #222;
+border-radius:10px;
+padding:16px;
+color:var(--green);
+resize:vertical;
+font-family:inherit;
+}
 
-        textarea {
-            width: 100%;
-            background: #000;
-            border: 1px solid #222;
-            color: var(--dna-blue);
-            padding: 18px;
-            border-radius: 8px;
-            resize: vertical;
-            font-family: inherit;
-            font-size: 1rem;
-            line-height: 1.5;
-            transition: border-color 0.2s;
-        }
+textarea:focus{
+outline:none;
+border-color:var(--green);
+}
 
-        textarea:focus {
-            outline: none;
-            border-color: var(--dna-green);
-        }
+.controls{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:15px;
+}
 
-        textarea::placeholder {
-            color: #333;
-        }
+button,select{
+background:#000;
+color:var(--green);
+border:1px solid #222;
+padding:10px 14px;
+border-radius:8px;
+cursor:pointer;
+font-family:inherit;
+}
 
-        #output {
-            word-break: break-all;
-            background: #000;
-            padding: 18px;
-            border: 1px solid #222;
-            border-radius: 8px;
-            min-height: 120px;
-            color: #fff;
-            font-weight: bold;
-            font-size: 1.1rem;
-            letter-spacing: 3px; /* Spacing crucial for DNA strings */
-            line-height: 1.6;
-        }
+button:hover{
+border-color:var(--green);
+}
 
-        #output.decoding {
-            color: var(--text-primary);
-            letter-spacing: normal;
-            font-weight: normal;
-        }
+.output{
+background:#000;
+border:1px solid #222;
+border-radius:10px;
+padding:16px;
+min-height:250px;
+white-space:pre-wrap;
+word-break:break-word;
+overflow-x:auto;
+}
 
-        .footer {
-            margin-top: auto;
-            padding-top: 3rem;
-            text-align: center;
-            width: 100%;
-            max-width: 650px;
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            border-top: 1px solid #1a1a1a;
-        }
+.stats{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-top:20px;
+}
 
-        .vespera-sig {
-            color: var(--dna-green);
-            font-weight: bold;
-        }
-    </style>
+.stat-box{
+background:#000;
+border:1px solid #1b1b1b;
+border-radius:10px;
+padding:12px;
+}
+
+.stat-label{
+color:var(--muted);
+font-size:.75rem;
+margin-bottom:5px;
+}
+
+.stat-value{
+color:var(--green);
+}
+
+.footer{
+margin-top:30px;
+padding-top:20px;
+border-top:1px solid var(--border);
+text-align:center;
+color:var(--muted);
+font-size:.75rem;
+}
+
+.help-panel{
+display:none;
+margin-top:20px;
+background:#000;
+border:1px solid #222;
+border-radius:12px;
+padding:20px;
+line-height:1.7;
+}
+
+.help-panel h3{
+color:var(--green);
+margin-bottom:10px;
+}
+
+.help-panel p{
+margin-bottom:15px;
+color:#ccc;
+}
+
+.help-panel code{
+color:var(--cyan);
+}
+
+@media(max-width:900px){
+.grid{
+grid-template-columns:1fr;
+}
+
+.stats{
+grid-template-columns:1fr;
+}
+}
+</style>
 </head>
+
 <body>
 
+<div class="wrapper">
+
 <div class="header">
-    <!-- Inline SVG DNA Helix Icon -->
-    <svg class="dna-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm-1-13h2v2h-2zm0 4h2v6h-2z"/>
-    </svg>
-    <h1>VESPERA HELIX</h1>
+<div class="title">🧬 VESPERA HELIX v2.2</div>
+<div class="subtitle">Biological Archival Encoding System</div>
 </div>
 
-<div class="container">
-    
-    <div class="io-section">
-        <div class="label-group">
-            <label class="input-label" for="main-input">System Input</label>
-            <span class="mode-indicator" id="mode-text">AUTO-DETECT</span>
-        </div>
-        <textarea id="main-input" rows="6" placeholder="Paste text or DNA (ACGT) sequence here..." oninput="processInput()"></textarea>
-    </div>
+<div class="grid">
 
-    <div class="io-section" style="margin-bottom: 0;">
-        <div class="label-group">
-            <label class="input-label">Output Result</label>
-        </div>
-        <div id="output">SYSTEM IDLE</div>
-    </div>
+<div class="panel">
+
+<div class="section-title">SYSTEM INPUT</div>
+
+<textarea id="inputText" placeholder="Paste plaintext data or DNA sequence here..."></textarea>
+
+<div class="controls">
+
+<select id="modeSelect">
+<option value="raw">RAW MODE</option>
+<option value="archive">ARCHIVE MODE</option>
+<option value="fasta">FASTA EXPORT</option>
+</select>
+
+<button onclick="encodeData()">ENCODE</button>
+<button onclick="decodeData()">DECODE</button>
+<button onclick="downloadArchive()">DOWNLOAD .DNA</button>
+<button onclick="downloadTxt()">DOWNLOAD .TXT</button>
+<button onclick="copyOutput()">COPY OUTPUT</button>
+<button onclick="toggleHelp()">HELP</button>
+
+</div>
+
+<div class="help-panel" id="helpPanel">
+
+<h3>VESPERA HELIX HELP SYSTEM</h3>
+
+<p>
+<b>RAW MODE</b><br>
+Converts plaintext directly into reversible DNA base sequences using:
+<br><code>A=00 C=01 G=10 T=11</code>
+</p>
+
+<p>
+<b>ARCHIVE MODE</b><br>
+Wraps the DNA sequence in metadata including timestamps and checksums.
+Best used for archival visualization and storage packaging.
+</p>
+
+<p>
+<b>FASTA EXPORT</b><br>
+Exports the DNA sequence in FASTA genomic format compatible with bioinformatics workflows.
+</p>
+
+<p>
+<b>HOW TO ENCODE</b><br>
+1. Paste plaintext into the input box.<br>
+2. Select export mode.<br>
+3. Press ENCODE.<br>
+4. Export using .DNA or .TXT.
+</p>
+
+<p>
+<b>HOW TO DECODE</b><br>
+RAW DNA sequences decode perfectly.<br>
+Paste only the DNA payload consisting of A/C/G/T bases, then press DECODE.
+</p>
+
+<p>
+<b>.DNA FORMAT</b><br>
+Custom Vespera archival container format.
+Readable in any text editor.
+</p>
+
+<p>
+<b>.TXT FORMAT</b><br>
+Standard plaintext export for universal compatibility.
+</p>
+
+<p>
+<b>CHECKSUM</b><br>
+Integrity hash used for archive verification.
+</p>
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<div class="section-title">ARCHIVE OUTPUT</div>
+
+<div class="output" id="outputArea">SYSTEM IDLE</div>
+
+<div class="stats">
+
+<div class="stat-box">
+<div class="stat-label">ENCODED BASES</div>
+<div class="stat-value" id="bases">0</div>
+</div>
+
+<div class="stat-box">
+<div class="stat-label">GC BALANCE</div>
+<div class="stat-value" id="gc">0%</div>
+</div>
+
+<div class="stat-box">
+<div class="stat-label">CHECKSUM</div>
+<div class="stat-value" id="checksum">N/A</div>
+</div>
+
+<div class="stat-box">
+<div class="stat-label">ARCHIVE STATUS</div>
+<div class="stat-value" id="status">IDLE</div>
+</div>
+
+</div>
+
+</div>
 
 </div>
 
 <div class="footer">
-    TRANSCODER v1.0 | ENGINEERED BY <span class="vespera-sig">VESPERA SYSTEMS</span>
+TRANSCODER v2.2 // ENGINEERED BY VESPERA SYSTEMS
+</div>
+
 </div>
 
 <script>
-    // Binary Mapping
-    const dnaMap = { '00': 'A', '01': 'C', '10': 'G', '11': 'T' };
-    
-    // Reverse Mapping (A='00', C='01', etc.)
-    const revDnaMap = Object.fromEntries(Object.entries(dnaMap).map(([k, v]) => [v, k]));
 
-    function processInput() {
-        const input = document.getElementById('main-input').value.trim();
-        const output = document.getElementById('output');
-        const modeText = document.getElementById('mode-text');
+const dnaMap = {
+'00':'A',
+'01':'C',
+'10':'G',
+'11':'T'
+};
 
-        // Reset display if input is empty
-        if (!input) {
-            output.textContent = "SYSTEM IDLE";
-            output.classList.remove('decoding');
-            modeText.textContent = "AUTO-DETECT";
-            return;
-        }
+const reverseMap = {
+'A':'00',
+'C':'01',
+'G':'10',
+'T':'11'
+};
 
-        // --- DETECT MODE ---
-        // Check if input consists only of A, C, G, T (ignoring whitespace/newlines)
-        const isDna = /^[ACGT\s\n]+$/i.test(input);
+function toggleHelp(){
 
-        if (isDna) {
-            // MODE: DECODE (DNA -> Text)
-            modeText.textContent = "DECODING: DNA 🡒 TEXT";
-            output.classList.add('decoding');
-            output.textContent = decodeDnaToText(input.toUpperCase().replace(/[\s\n]/g, ''));
-        } else {
-            // MODE: ENCODE (Text -> DNA)
-            modeText.textContent = "ENCODING: TEXT 🡒 DNA";
-            output.classList.remove('decoding');
-            output.textContent = encodeTextToDna(input);
-        }
-    }
+const panel = document.getElementById('helpPanel');
 
-    // Function 1: TEXT -> DNA
-    function encodeTextToDna(text) {
-        let dnaSequence = "";
-        for (let i = 0; i < text.length; i++) {
-            // Char to 8-bit binary
-            let binary = text.charCodeAt(i).toString(2).padStart(8, '0');
-            // Map 2-bit pairs to ACGT
-            for (let j = 0; j < binary.length; j += 2) {
-                let pair = binary.substring(j, j + 2);
-                dnaSequence += dnaMap[pair];
-            }
-        }
-        return dnaSequence;
-    }
+if(panel.style.display === 'block'){
+panel.style.display = 'none';
+}
+else{
+panel.style.display = 'block';
+}
+}
 
-    // Function 2: DNA -> TEXT
-    function decodeDnaToText(dna) {
-        // DNA sequences must be multiples of 4 (since 4 bases = 1 byte)
-        if (dna.length % 4 !== 0) {
-            return "ERROR: Invalid DNA sequence length (must be multiple of 4 bases).";
-        }
+function utf8ToBinary(str){
 
-        let binaryString = "";
-        // Convert ACGT pairs back to 2-bit binary
-        for (let i = 0; i < dna.length; i++) {
-            const base = dna[i];
-            if (revDnaMap[base]) {
-                binaryString += revDnaMap[base];
-            } else {
-                return `ERROR: Invalid base character '${base}' detected.`;
-            }
-        }
+const encoder = new TextEncoder();
+const bytes = encoder.encode(str);
 
-        // Convert 8-bit binary chunks back to characters
-        let outputText = "";
-        for (let i = 0; i < binaryString.length; i += 8) {
-            let byte = binaryString.substring(i, i + 8);
-            outputText += String.fromCharCode(parseInt(byte, 2));
-        }
-        return outputText;
-    }
+return Array.from(bytes)
+.map(byte => byte.toString(2).padStart(8,'0'))
+.join('');
+}
+
+function binaryToUtf8(binary){
+
+const bytes = [];
+
+for(let i=0;i<binary.length;i+=8){
+bytes.push(parseInt(binary.slice(i,i+8),2));
+}
+
+const decoder = new TextDecoder();
+
+return decoder.decode(new Uint8Array(bytes));
+}
+
+function binaryToDNA(binary){
+
+let dna = '';
+
+for(let i=0;i<binary.length;i+=2){
+dna += dnaMap[binary.slice(i,i+2)];
+}
+
+return dna;
+}
+
+function dnaToBinary(dna){
+
+let binary = '';
+
+for(const base of dna){
+
+if(!reverseMap[base]){
+throw new Error('Invalid DNA base detected');
+}
+
+binary += reverseMap[base];
+}
+
+return binary;
+}
+
+function computeChecksum(str){
+
+let hash = 0;
+
+for(let i=0;i<str.length;i++){
+hash=((hash<<5)-hash)+str.charCodeAt(i);
+hash|=0;
+}
+
+return Math.abs(hash).toString(16).toUpperCase();
+}
+
+function calculateGC(dna){
+
+if(!dna.length) return '0%';
+
+const gcCount = dna.split('').filter(
+b => b === 'G' || b === 'C'
+).length;
+
+return ((gcCount/dna.length)*100).toFixed(2) + '%';
+}
+
+function generateArchivePacket(dna, checksum){
+
+const timestamp = new Date().toISOString();
+
+return `VSX1-HEADER
+TIMESTAMP:${timestamp}
+CHECKSUM:${checksum}
+PAYLOAD:
+${dna}
+END-ARCHIVE`;
+}
+
+function generateFASTA(dna){
+
+const timestamp = Date.now();
+
+const wrapped = dna.match(/.{1,80}/g).join('\n');
+
+return `>VESPERA_ARCHIVE_${timestamp}
+${wrapped}`;
+}
+
+function encodeData(){
+
+try{
+
+const input = document.getElementById('inputText').value;
+const mode = document.getElementById('modeSelect').value;
+
+if(!input.trim()) return;
+
+const binary = utf8ToBinary(input);
+
+const dna = binaryToDNA(binary);
+
+const checksum = computeChecksum(input);
+
+let output = '';
+
+if(mode === 'raw'){
+output = dna;
+}
+else if(mode === 'archive'){
+output = generateArchivePacket(dna, checksum);
+}
+else{
+output = generateFASTA(dna);
+}
+
+document.getElementById('outputArea').textContent = output;
+
+updateStats(dna, checksum, 'ARCHIVE READY');
+
+}
+catch(err){
+setError(err.message);
+}
+}
+
+function decodeData(){
+
+try{
+
+let input = document.getElementById('inputText').value.trim();
+
+if(!input){
+throw new Error('No DNA sequence provided');
+}
+
+input = input.replace(/[^ACGT]/gi,'');
+
+if(input.length % 4 !== 0){
+throw new Error('Invalid DNA sequence length');
+}
+
+const binary = dnaToBinary(input.toUpperCase());
+
+const decoded = binaryToUtf8(binary);
+
+document.getElementById('outputArea').textContent = decoded;
+
+updateStats(input, computeChecksum(decoded), 'DECODE SUCCESS');
+
+}
+catch(err){
+setError(err.message);
+}
+}
+
+function updateStats(dna, checksum, status){
+
+document.getElementById('bases').textContent = dna.length.toLocaleString();
+
+document.getElementById('gc').textContent = calculateGC(dna);
+
+document.getElementById('checksum').textContent = checksum;
+
+document.getElementById('status').textContent = status;
+}
+
+function setError(msg){
+
+document.getElementById('outputArea').textContent = 'ERROR: ' + msg;
+
+document.getElementById('status').textContent = 'ERROR';
+}
+
+function copyOutput(){
+
+const output = document.getElementById('outputArea').textContent;
+
+navigator.clipboard.writeText(output);
+
+alert('Output copied to clipboard');
+}
+
+function downloadArchive(){
+
+const content = document.getElementById('outputArea').textContent;
+
+const blob = new Blob([content], {type:'text/plain'});
+
+const link = document.createElement('a');
+
+link.href = URL.createObjectURL(blob);
+
+link.download = 'vespera_archive.dna';
+
+document.body.appendChild(link);
+
+link.click();
+
+document.body.removeChild(link);
+}
+
+function downloadTxt(){
+
+const content = document.getElementById('outputArea').textContent;
+
+const blob = new Blob([content], {type:'text/plain'});
+
+const link = document.createElement('a');
+
+link.href = URL.createObjectURL(blob);
+
+link.download = 'vespera_archive.txt';
+
+document.body.appendChild(link);
+
+link.click();
+
+document.body.removeChild(link);
+}
+
 </script>
 
 </body>
